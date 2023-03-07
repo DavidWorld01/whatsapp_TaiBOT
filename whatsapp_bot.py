@@ -5,7 +5,7 @@ from class_replicate import Replicate_API
 from water_mark import Water_Mark
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
-
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -25,7 +25,16 @@ def wa_sms_reply():
     print("Message from", sender, ":", msg)
     resp = MessagingResponse()
     if msg.startswith('/tai'):
-        send_photo_message(sender,"https://m.media-amazon.com/images/I/710ut7y5jYL._AC_UF894,1000_QL80_.jpg","Here is your image")
+        print("Prompt was {}",msg[5:])
+        obj = Replicate_API(msg[5:])
+        url = obj.get_result()[0]
+        print("Got result")
+        obj_watermark= Water_Mark(url)
+        obj_watermark.get_result()
+        print("Image saved")
+        photo_path = '/result.png'
+        print('file:///home/whatsapp_TaiBOT/result.png')
+        send_photo_message(sender,'http://165.232.134.84:5000/image.jpg',"Here is your image")
         return str(resp)
     else:
         
